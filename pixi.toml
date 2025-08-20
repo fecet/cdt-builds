@@ -1,0 +1,27 @@
+[workspace]
+authors = ["fecet <xiezej@gmail.com>"]
+channels = ["conda-forge"]
+name = "cdt-builds"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "*"
+anaconda-client = "*"
+click = "*"
+conda = ">=23.9"
+conda-libmamba-solver = ">=23.9"
+mamba = ">=1.5.2"
+conda-build = ">=3.27"
+conda-forge-pinning = "*"
+jinja2 = "*"
+requests = "*"
+rpm-tools = "*"
+"ruamel.yaml" = "*"
+"ruamel.yaml.clib" = "*"
+"ruamel.yaml.jinja2" = "*"
+shyaml = "*"
+tqdm = "*"
+wurlitzer = "*"
