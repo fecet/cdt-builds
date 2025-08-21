@@ -94,6 +94,47 @@ def _gen_dist_arch_str(dist, arch):
     return f"{dist}-{arch}"
 
 
+def _should_skip_package(cfg, dist, arch):
+    """
+    Evaluate skip conditions for a package configuration.
+    
+    Args:
+        cfg (dict): Package configuration from cdt_slugs.yaml
+        dist (str): Distribution name (e.g., "centos7", "alma8", "alma9")
+        arch (str): Architecture name (e.g., "x86_64", "aarch64", "ppc64le")
+        
+    Returns:
+        bool: True if package should be skipped, False otherwise
+    """
+    if "skip" not in cfg:
+        return False
+    
+    skip_conditions = cfg["skip"]
+    if not isinstance(skip_conditions, list):
+        skip_conditions = [skip_conditions]
+    
+    # Create context for evaluating skip conditions
+    context = {
+        "architecture": arch,
+        "distro": dist,
+        "dist": dist,  # alias for distro
+        "arch": arch,   # alias for architecture
+    }
+    
+    for condition in skip_conditions:
+        try:
+            # Safely evaluate the condition string
+            # This supports simple expressions like "architecture == 'aarch64'"
+            if eval(condition, {"__builtins__": {}}, context):
+                return True
+        except Exception as e:
+            print(f"WARNING: Error evaluating skip condition '{condition}' for package: {e}")
+            # If we can't evaluate the condition, don't skip (safer default)
+            continue
+    
+    return False
+
+
 def _make_cdt_recipes(*, extra, cdt_path, dist_arch_tuples, cdts, allowlists, exec, force):
     futures = {}
     for dist, arch in dist_arch_tuples:
@@ -106,6 +147,15 @@ def _make_cdt_recipes(*, extra, cdt_path, dist_arch_tuples, cdts, allowlists, ex
                 continue
 
             if cdt not in allowlist:
+                continue
+
+            # Check if package should be skipped for this architecture/distro
+            if _should_skip_package(cfg, dist, arch):
+                print(
+                    f"skipping CDT: {cdt.lower()}-{_gen_dist_arch_str(dist, arch)} "
+                    f"(skip condition matched)",
+                    flush=True,
+                )
                 continue
 
             _pth = os.path.join(
