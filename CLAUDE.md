@@ -103,6 +103,7 @@ cdt_slugs.yaml → gen_cdt_recipes.py → rpm.py → cdts/package-distro-arch/
   - `dep_replace` - Dependencies to replace (aliased RPMs)
   - `subfolder` - Repository subfolder per distro (BaseOS, AppStream, CRB, PowerTools)
   - `build_append` - Shell code to append to build scripts
+  - `skip` - List of conditions to skip package generation for specific architectures/distros
 
 ### Supported Distros and Repositories
 - **centos7**: CentOS 7.9.2009 from vault.centos.org
@@ -116,6 +117,20 @@ cdt_slugs.yaml → gen_cdt_recipes.py → rpm.py → cdts/package-distro-arch/
 2. Add package configuration in `build_defs` section
 3. Run `python gen_cdt_recipes.py`
 4. Commit changes
+
+### Skipping Packages for Specific Architectures
+To skip package generation for specific architectures or distributions, add a `skip` configuration:
+```yaml
+build_defs:
+  package-name:
+    custom: false
+    skip:
+      - architecture == 'aarch64'          # Skip for aarch64
+      - architecture == 'ppc64le'          # Skip for ppc64le  
+      - distro == 'centos7' and arch == 'x86_64'  # Complex conditions
+```
+
+Available variables: `architecture`/`arch` (x86_64, aarch64, ppc64le), `distro`/`dist` (centos7, alma8, alma9)
 
 ### Modifying CDT Generation Logic
 1. Bump `cdt_build_number` in `conda_build_config.yaml`
