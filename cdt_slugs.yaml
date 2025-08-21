@@ -20,6 +20,9 @@ allowlists:
     - mesa-libgbm-devel
     - pam
     - pam-devel
+    - shadow-utils
+    - shadow-utils-subid
+    - shadow-utils-subid-devel
   alma8:
     - audit-libs
     - audit-libs-devel
@@ -994,3 +997,13 @@ build_defs:
     license_file: licenses/x11-license
   xorg-x11-util-macros:
     custom: false
+  shadow-utils:
+    custom: false
+    license_file: null
+  shadow-utils-subid:
+    custom: false
+  shadow-utils-subid-devel:
+    custom: false
+    license_file: null
+    subfolder:
+      alma9: CRB

@@ -1,0 +1,50 @@
+package:
+  name: shadow-utils-subid-devel-conda-x86_64
+  version: 4.9
+
+source:
+  - url: https://vault.almalinux.org/9.4/CRB/x86_64/os/Packages/shadow-utils-subid-devel-4.9-8.el9.x86_64.rpm
+    sha256: e797c7a645c887b11dbb3d575da1a68b07e95c6161d4ad57330683811dba9405
+    no_hoist: true
+    folder: binary
+  # - url: https://vault.almalinux.org/9.4/CRB/Source/Packages/shadow-utils-4.9-8.el9.src.rpm
+  #   no_hoist: true
+  #   folder: source
+
+build:
+  number: {{ cdt_build_number|int + 1000 }}
+  noarch: generic
+  binary_relocation: false
+  detect_binary_files_with_prefix: false
+  missing_dso_whitelist:
+    - '*'
+  # this skip is here because we need different package hashes per distro.
+  # we therefore list all possible values in CBC and skip those we don't want;
+  # use in a selector ensures that the `distro` variable shows up in the hash
+  skip: true  # [distro != "alma9"]
+
+requirements:
+  build:
+    - shadow-utils-subid-conda-x86_64 ==4.9 *_{{ cdt_build_number|int + 1000 }}
+  host:
+    - shadow-utils-subid-conda-x86_64 ==4.9 *_{{ cdt_build_number|int + 1000 }}
+    - sysroot_linux-64 2.34.*
+  run:
+    - shadow-utils-subid-conda-x86_64 ==4.9 *_{{ cdt_build_number|int + 1000 }}
+    - sysroot_linux-64 2.34.*
+
+test:
+  commands:
+    - echo "it installs!"
+
+about:
+  home: https://github.com/shadow-maint/shadow
+  license: BSD and GPLv2+
+  license_family: GPL2
+  summary: (CDT) Development package for shadow-utils-subid
+  description: |
+    Development files for shadow-utils-subid.
+
+extra:
+  recipe-maintainers:
+    - conda-forge/help-cdts

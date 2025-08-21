@@ -1,0 +1,61 @@
+package:
+  name: shadow-utils-conda-aarch64
+  version: 4.9
+
+source:
+  - url: https://vault.almalinux.org/9.4/BaseOS/aarch64/os/Packages/shadow-utils-4.9-8.el9.aarch64.rpm
+    sha256: 5e7613458d8eb96d5a0145ef3234c74df0b7b9f3eb72dd8140a602308052aa6c
+    no_hoist: true
+    folder: binary
+  # - url: https://vault.almalinux.org/9.4/BaseOS/Source/Packages/shadow-utils-4.9-8.el9.src.rpm
+  #   no_hoist: true
+  #   folder: source
+
+build:
+  number: {{ cdt_build_number|int + 1000 }}
+  noarch: generic
+  binary_relocation: false
+  detect_binary_files_with_prefix: false
+  missing_dso_whitelist:
+    - '*'
+  # this skip is here because we need different package hashes per distro.
+  # we therefore list all possible values in CBC and skip those we don't want;
+  # use in a selector ensures that the `distro` variable shows up in the hash
+  skip: true  # [distro != "alma9"]
+
+requirements:
+  build:
+    - audit-libs-conda-aarch64 >=1.6.5 *_{{ cdt_build_number|int + 1000 }}
+    - libselinux-conda-aarch64 >=1.25.2 *_{{ cdt_build_number|int + 1000 }}
+  host:
+    - audit-libs-conda-aarch64 >=1.6.5 *_{{ cdt_build_number|int + 1000 }}
+    - libselinux-conda-aarch64 >=1.25.2 *_{{ cdt_build_number|int + 1000 }}
+    - sysroot_linux-aarch64 2.34.*
+  run:
+    - audit-libs-conda-aarch64 >=1.6.5 *_{{ cdt_build_number|int + 1000 }}
+    - libselinux-conda-aarch64 >=1.25.2 *_{{ cdt_build_number|int + 1000 }}
+    - sysroot_linux-aarch64 2.34.*
+
+test:
+  commands:
+    - echo "it installs!"
+
+about:
+  home: https://github.com/shadow-maint/shadow
+  license: BSD and GPLv2+
+  license_family: GPL2
+  summary: (CDT) Utilities for managing accounts and shadow password files
+  description: |
+    The shadow-utils package includes the necessary programs for converting UNIX
+    password files to the shadow password format, plus programs for managing user
+    and group accounts. The pwconv command converts passwords to the shadow
+    password format. The pwunconv command unconverts shadow passwords and
+    generates a passwd file (a standard UNIX password file). The pwck command
+    checks the integrity of password and shadow files. The lastlog command prints
+    out the last login times for all users. The useradd, userdel, and usermod
+    commands are used for managing user accounts. The groupadd, groupdel, and
+    groupmod commands are used for managing group accounts.
+
+extra:
+  recipe-maintainers:
+    - conda-forge/help-cdts
